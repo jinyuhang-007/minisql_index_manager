@@ -1,53 +1,63 @@
 #ifndef _BPT_H
 #define _BPT_H
-#include<iostream>
-#include<sstream>
-#include<string>
-#include<vector>
-#include<map>
-#include<algorithm>
-#include<queue>
+#include <iostream>
+#include <string>
+#include <vector>
+#include <math.h>
 using namespace std;
-enum node_type {root, branch, leaf, any};//节点类型的声明
 
+/*----------Node----------*/
 template<typename T>
 class Node {
 public:
-	Node(int rank, node_type type);//———— √
-	~Node();//———— √
-	bool add_key_branch(T& key);//———— √
-	bool add_key_leaf(T& key, int val);//———— √
-	bool delete_key(int index);//———— √
-	int search_key(T key);//返回key的index，如果没有，则返回-1
-
+	friend class BPT;//声明友元类
+	Node(int rank, bool isleaf);	//finished
+	~Node();						//finished
+	bool isroot();					//finished
+	Node<T>* split(T& up_key);		//finished
+	unsigned int insert_key(T k);	//finished
+	unsigned int insert_key(T k, int val);//finished
+	bool delete_key(unsigned int index);//finished
+	bool search_key(T k, unsigned int &index);//finished
+	bool find_range(unsigned int index, T& k, vector<int>& ans);//finished
+	bool find_range(unsigned int index, vector<int>& ans);//finished
+public:
+	void print();//debug
 private:
-	int rank;//阶, 表示孩子的最大数量
-	int key_cap;//rank-1,表示key的最大数量
-	int key_count;//节点当中key的数量
-	vector<T> keys;//存放key
-	vector<Node*> children;//指向孩子的指针
-	vector<int> vals;//values
-	Node* last;//上一个叶节点
-	Node* next;//叶节点中指向下一个叶节点
-	Node* father;//上一层的节点
-	node_type type;//节点的类型
+	unsigned int rank;//阶
+	bool isleaf;
+	unsigned int key_num;//key的数量
+	vector<T> key;
+	vector<Node<T>*> pointer;
+	vector<int> value;
+	Node<T>* father;//父亲节点
+	Node<T>* last_leaf;//上一个叶节点
+	Node<T>* next_leaf;//下一个叶节点
+private:
+	unsigned int min_key;//节点中最少的key的数量
+	unsigned int min_pointer;//节点中最少的pointer的数量
 };
 
-
-/*-------------分割线---------------*/
+/*-------------BPT------------*/
 template<typename T>
 class BPT {
 public:
-	BPT(int n);
+	BPT(string File, int Rank);
 	~BPT();
-	bool insert_key(T key);//插入
-	bool delete_key(T key);//删除
-	pair<Node*, T> find(T key);//查询
-	bool drop_tree();
+	void Delete_Tree(Node<T>* node);//被析构函数调用
+	Node<T>* Search_Node(T k);//便于插入操作
+	bool Insert_Adjust(Node<T>* node);//便于插入操作
+	bool Delete_Adjust(Node<T>* node);
+public:
+	bool Insert_Key(T k, int val);//插入
+	bool Delete_Key(T k);//删除
+	bool Search_Key(T k);//查询
+	void Print();//debug
 private:
-	int rank;//阶
-	int level;//树的层数
-	Node* root;//根节点
+	string File;
+	int Rank;
+	int Node_num;
+	Node<T>* Root;
+	Node<T>* MostLeftLeaf;
 };
-
 #endif
