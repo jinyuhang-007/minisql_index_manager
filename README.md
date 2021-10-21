@@ -1,2 +1,2 @@
 # minisql_index_manager
-DB
+This is part of our database class project minisql.
